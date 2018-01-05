@@ -57,7 +57,8 @@ namespace Domain.TorreHanoi
 
         private void Resolver(int numeroDiscosRestante, Pino origem, Pino intermediario, Pino destino)
         {
-            if (numeroDiscosRestante <= 1)
+            //BugFix: A função recursiva estava barrando a execução do 3º disco...
+            if (numeroDiscosRestante < 1)
             {
                 return;
             }

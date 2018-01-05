@@ -103,9 +103,10 @@ namespace Application.TorreHanoi.Implementation
             }
             try
             {
-                var torre = _domainService.ObterPor(new Guid());
+                //BugFix: Faltou passar o id do guid para retornar a torre...
+                var torre = _domainService.ObterPor(new Guid(id));
 
-                _designerService.Inicializar(_adpterTorreHanoi.DomainParaDesignerDto(torre));
+                _designerService.Inicializar(_adpterTorreHanoi.DomainParaDesignerDto(torre));                
 
                 response.Imagem = _designerService.Desenhar();
             }

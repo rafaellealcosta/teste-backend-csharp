@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Net;
 using Application.TorreHanoi.Implementation;
 using Application.TorreHanoi.Interface;
 using Domain.TorreHanoi.Interface.Service;
 using Infrastructure.TorreHanoi.ImagemHelper;
+using Infrastructure.TorreHanoi.ImagemHelper.Dto;
 using Infrastructure.TorreHanoi.Log;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -24,12 +26,13 @@ namespace Tests.TorreHanoi.Application
             var mockLogger = new Mock<ILogger>();
             mockLogger.Setup(s => s.Logar(It.IsAny<string>(), It.IsAny<TipoLog>()));
 
-            var mockDesignerService = new Mock<IDesignerService>();
-
             var mockTorreHanoiDomainService = new Mock<ITorreHanoiDomainService>();
             mockTorreHanoiDomainService.Setup(s => s.Criar(It.IsAny<int>())).Returns(Guid.NewGuid);
             mockTorreHanoiDomainService.Setup(s => s.ObterPor(It.IsAny<Guid>())).Returns(() => new global::Domain.TorreHanoi.TorreHanoi(3, mockLogger.Object));
             mockTorreHanoiDomainService.Setup(s => s.ObterTodos()).Returns(() => new List<global::Domain.TorreHanoi.TorreHanoi> { new global::Domain.TorreHanoi.TorreHanoi(3, mockLogger.Object) });
+
+            var mockDesignerService = new Mock<IDesignerService>();
+            mockDesignerService.Setup(s => s.Desenhar()).Returns(new Bitmap(200, 200));            
 
             _service = new TorreHanoiApplicationService(mockTorreHanoiDomainService.Object, mockLogger.Object, mockDesignerService.Object);
         }
@@ -79,7 +82,13 @@ namespace Tests.TorreHanoi.Application
         [TestCategory(CategoriaTeste)]
         public void ObterImagemProcessoPor_Deve_Retornar_Imagem()
         {
-            Assert.Fail();
+            var response = _service.ObterImagemProcessoPor(Guid.NewGuid().ToString());
+
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Imagem);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+            Assert.IsTrue(response.IsValid);
+            Assert.IsTrue(response.MensagensDeErro.Count == 0);
         }
     }
 }
